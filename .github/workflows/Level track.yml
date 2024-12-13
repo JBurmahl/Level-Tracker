@@ -20,7 +20,7 @@ jobs:
           npm install discord.js
       - name: Run bot
         env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DISCORD_TOKEN: ${{ secrets.TOKEN2 }}
           MONGO_URI: ${{ secrets.MONGO_URI }}
         run: |
           node levelTracking.js
