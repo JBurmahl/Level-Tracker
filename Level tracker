@@ -1,0 +1,49 @@
+const Discord = require('discord.js');
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/levels', { useNewUrlParser: true, useUnifiedTopology: true });
+
+const levelSchema = new mongoose.Schema({
+  userId: String,
+  level: Number
+});
+
+const Level = mongoose.model('Level', levelSchema);
+
+const client = new Discord.Client();
+
+client.on('ready', () => {
+  console.log('Bot is online!');
+});
+
+client.on('message', async message => {
+  if (message.author.bot) return;
+
+  const level = await Level.findOne({ userId: (message.author.id) });
+  if (!level) {
+    const newLevel = new Level({ userId: (message.author.id), level: 1 });
+    await newLevel.save();
+  }
+});
+
+client.on('webhook', async webhook => {
+  const levelUpdate = webhook.body;
+  const userId = levelUpdate.userId;
+  const newLevel = levelUpdate.newLevel;
+
+  const level = await Level.findOne({ userId });
+  if (level) {
+    level.level = newLevel;
+    await level.save();
+
+    const role = getRoleForLevel(newLevel);
+    const member = await client.guilds.cache.get('1272974838767550635').members.fetch(userId);
+    await member.roles.add(role);
+  }
+});
+
+function getRoleForLevel(level) {
+  // Implement logic to get role for level
+}
+
+client.login('MTMwOTY1MTk1NTk0OTI0NDUwOA.GUyFEn.Ux2bR-4DFcU9xD7R3-sFrYw-2Z6QTAVGVX3Sw8');
