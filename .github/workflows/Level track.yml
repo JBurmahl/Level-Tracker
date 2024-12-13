@@ -1,0 +1,26 @@
+name: Level Tracking
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0/1 * * * *
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: |
+          npm install discord.js
+      - name: Run bot
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: |
+          node levelTracking.js
